@@ -1,12 +1,12 @@
 from enum import Enum
 
-class CardColor(Enum):
+class CardColorType(Enum):
     LEAF = 0
     HEART = 1
     ACORN = 2
     BELL = 3
 
-class CardNumber(Enum):
+class CardNumberType(Enum):
     SEVEN = 0
     EIGH = 1
     NINE = 2

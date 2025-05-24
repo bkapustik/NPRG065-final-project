@@ -5,8 +5,8 @@ from game_menu import GameMenu
 if __name__ == "__main__":
     pygame.init()
 
-    screenWidth = 1000
-    screenHeight = 700
+    screenWidth = 1300
+    screenHeight = 800
     screen = pygame.display.set_mode((screenWidth, screenHeight), pygame.RESIZABLE)
     gameMenu = GameMenu(screen)
 

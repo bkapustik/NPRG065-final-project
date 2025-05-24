@@ -4,6 +4,8 @@ class GameData:
     topHasBeenPlayed = False
 
     colorToBePlayed = None
+    displayColorOptions = False
+    playerHasFinished = False
 
     def evaluateCardNumberSeven(self):
         self.cardsToTake += 3
