@@ -1,20 +1,20 @@
 import pygame
 from app_variable_value_helper import AppVariableValueHelper
+from Sprites.clickable_sprite import ClickableSprite
 
-class MenuButton(pygame.sprite.Sprite):
+class MenuButton(ClickableSprite):
     startImage: pygame.Surface
     restartImage: pygame.Surface
     appVariableValueHelper: AppVariableValueHelper
 
     def __init__(self, startImagePath: str, restartImagePath: str, appVariableHelper: AppVariableValueHelper):
-        super().__init__()
+        super().__init__(startImagePath, appVariableHelper.screenWidth / 2, appVariableHelper.screenHeight / 2, 400, 100)
         
         self.startImage = pygame.image.load(startImagePath).convert_alpha()
         self.restartImage = pygame.image.load(restartImagePath).convert_alpha()
         
         self.appVariableValueHelper = appVariableHelper
 
-        self.setStartImage()
         self.setPosition()
 
     def setStartImage(self):

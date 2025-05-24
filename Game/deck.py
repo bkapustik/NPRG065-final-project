@@ -5,11 +5,14 @@ import pygame
 
 class Deck:
     frontDeckCard: Card
-    cards: list[Card]
+    cards: list[Card] = []
     displayedSprites: pygame.sprite.Group
 
-    def __init__(self):
+    def __init__(self, cards: list[Card]):
         self.displayedSprites = pygame.sprite.Group()
+        for card in cards:
+            self.addACard(card)
+        self.shuffle()
 
     def shuffle(self):
         random.shuffle(self.cards)

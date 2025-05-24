@@ -1,4 +1,3 @@
-from Cards.cards import Card
 from Cards.card_types import CardColorType
 
 class AppVariableValueHelper:
@@ -9,10 +8,6 @@ class AppVariableValueHelper:
     screenHeight: float
     screenWidth: float
     
-    def __init__(self, firstCard: Card):
-        self.cardHeight = firstCard.cardSprite.image.get_rect().height / self.cardDecreasHeightBy
-        self.cardWidth = firstCard.cardSprite.image.get_rect().width / self.cardDecreaseWidthBy
-
     def __init__(self, screenWidth: float, screenHeight: float):
         self.screenWidth = screenWidth
         self.screenHeight = screenHeight

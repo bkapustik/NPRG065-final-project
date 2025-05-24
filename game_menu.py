@@ -2,16 +2,10 @@ import pygame
 from menu_button import MenuButton
 from game_manager import GameManager
 from Game.game_data import GameData
+from Game.game_data import GameState
 from enum import Enum
 from Cards.color_card import ColorCard
 from app_variable_value_helper import AppVariableValueHelper
-
-class GameState(Enum):
-    INITIAL = 0
-    PLAYING = 1
-    PLAYER_WON = 2
-    PLAYER_LOST = 3
-    PAUSED = 4
 
 class GameMenu:
     green = (0, 255, 0)
@@ -22,7 +16,6 @@ class GameMenu:
     startTexture: pygame.Surface
     menuButton: MenuButton
     
-    gameState: GameState = GameState.INITIAL
     gameManager: GameManager
     gameData: GameData
 
@@ -60,22 +53,32 @@ class GameMenu:
         self.clock = pygame.time.Clock()
         self.gameData = GameData()
         self.gameManager = GameManager(self.colorSprites, self.gameData)
+        self.menuButton.callback = self.menuButtonClick
 
     def setScreenSize(self, screenWidth: float, screenHeight: float):
         self.appVariableHelper.screenWidth = screenWidth
         self.appVariableHelper.screenHeight = screenHeight
         self.menuButton.setPosition()
 
+    def menuButtonClick(self):
+        print("Menu button clicked")
+        self.gameManager.restartGame()
+        self.menuButton.setRestartImage()
+        self.gameData.gameState = GameState.PLAYING
+
     def displayColorOptions(self):
         self.colorSprites.draw(self.screen)
 
     def render(self):
-        if (True):
+        if (self.gameData.displayColorOptions):
             self.displayColorOptions()
-        elif (self.gameState == GameState.PLAYING):
+        elif (self.gameData.gameState == GameState.PLAYING):
             self.displayGame()
         else:
             self.displayMenu()
+
+    def reactToClicks(self, events: list[pygame.event.Event]):
+        self.menuButton.update(events)
             
     def setGameEndText(self, text: pygame.Surface):
         textRect = text.get_rect(center=(self.appVariableHelper.screenWidth // 2, self.appVariableHelper.screenHeight // 2 - 100))
@@ -84,10 +87,10 @@ class GameMenu:
     def displayMenu(self):
         self.menuSprites.draw(self.screen)
 
-        if self.gameState == GameState.PLAYER_WON:
+        if self.gameData.gameState == GameState.PLAYER_WON:
             self.setGameEndText(self.wonText)
 
-        elif self.gameState == GameState.PLAYER_LOST:
+        elif self.gameData.gameState == GameState.PLAYER_LOST:
             self.setGameEndText(self.lostText)
 
     def displayGame(self):
@@ -95,7 +98,7 @@ class GameMenu:
              self.gameManager.userInputReceived
         ):
             if (self.gameData.playerHasFinished):
-                self.gameState = GameState.PLAYER_WON
+                self.gameData.gameState = GameState.PLAYER_WON
 
     def createColorOptions(self):
         colors = ["Acorns", "Balls", "Green", "Heart"]
