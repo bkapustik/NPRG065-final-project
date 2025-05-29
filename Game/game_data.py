@@ -1,6 +1,7 @@
 from enum import Enum
 
 from Game.player_event import PlayerEvent
+from Cards.card_types import CardColorType, CardNumberType
 
 class GameState(Enum):
     INITIAL = 0
@@ -10,19 +11,28 @@ class GameState(Enum):
     PAUSED = 4
 
 class GameData:
-    cardsToTake = 0
-    numberOfPlayersSkippedByAce = 0
-    topHasBeenPlayed = False
+    cardsToTake: int
+    numberOfPlayersSkippedByAce: int
+    topHasBeenPlayed: bool
 
-    colorToBePlayed = None
-    displayColorOptions = False
-    playerHasFinished = False
-    gameState: GameState = GameState.INITIAL
-    playerEvent: PlayerEvent = PlayerEvent.NOT_PLAYING
+    colorToBePlayed: CardColorType
+    displayColorOptions: bool
+    playerHasFinished: bool
+    gameState: GameState
+    userInputReceived: bool
+
+    def __init__(self):
+        self.cardsToTake = 0
+        self.numberOfPlayersSkippedByAce = 0
+        self.topHasBeenPlayed = False
+        self.colorToBePlayed = None
+        self.displayColorOptions = False
+        self.playerHasFinished = False
+        self.gameState = GameState.INITIAL
+        self.userInputReceived = False
 
     def evaluateCardNumberSeven(self):
         self.cardsToTake += 3
-        self.playerEvent = PlayerEvent.HAS_TO_TAKE_A_CARD
 
     def evaluateLeafBotCard(self):
         self.cardsToTake = 0
@@ -32,3 +42,8 @@ class GameData:
 
     def evaluateSkippingCard(self):
         self.numberOfPlayersSkippedByAce += 1
+
+    def evaluateColorOptionCard(self, color: CardColorType):
+        self.colorToBePlayed = color
+        self.displayColorOptions = False
+        self.userInputReceived = True   

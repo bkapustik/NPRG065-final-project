@@ -5,10 +5,8 @@ from game_menu import GameMenu
 if __name__ == "__main__":
     pygame.init()
 
-    screenWidth = 1300
-    screenHeight = 800
-    screen = pygame.display.set_mode((screenWidth, screenHeight), pygame.RESIZABLE)
-    gameMenu = GameMenu(screen)
+    screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+    gameMenu = GameMenu(screen, screen.get_width(), screen.get_height())
 
     while True:
         events = pygame.event.get()
@@ -16,10 +14,6 @@ if __name__ == "__main__":
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-
-            if event.type == pygame.VIDEORESIZE:
-                screenWidth, screenHeight = event.w, event.h
-                gameMenu.setScreenSize(screenWidth, screenHeight)
 
         screen.fill((255, 255, 255))
         screen.blit(gameMenu.background, (0, 0))

@@ -10,9 +10,14 @@ class ClickableSprite(pygame.sprite.Sprite):
         self.image = pygame.image.load(imgPath).convert_alpha()
         self.image = pygame.transform.scale(self.image, (int(width), int(height)))
         self.rect = self.image.get_rect(center=(x, y))
+        self.callback = None
 
     def update(self, events: list[pygame.event.Event]):
         for event in events:
             if event.type == pygame.MOUSEBUTTONUP:
                 if self.rect.collidepoint(event.pos):
-                    self.callback()
+                    if self.callback is not None:
+                        self.callback()
+
+    def setPosition(self, x: float, y: float):
+        self.rect = self.image.get_rect(center=(x, y))

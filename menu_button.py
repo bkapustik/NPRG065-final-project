@@ -15,15 +15,15 @@ class MenuButton(ClickableSprite):
         
         self.appVariableValueHelper = appVariableHelper
 
-        self.setPosition()
+        self.setPositionDefault()
 
     def setStartImage(self):
         self.image = self.startImage
-        self.setPosition()
+        self.setPositionDefault()
 
     def setRestartImage(self):
         self.image = self.restartImage
-        self.setPosition()
+        self.setPositionDefault()
 
-    def setPosition(self):
-        self.rect = self.image.get_rect(center=(self.appVariableValueHelper.screenWidth / 2, self.appVariableValueHelper.screenHeight / 2))
+    def setPositionDefault(self):
+        self.setPosition(self.appVariableValueHelper.screenWidth / 2, self.appVariableValueHelper.screenHeight / 2)
