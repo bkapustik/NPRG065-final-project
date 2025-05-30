@@ -5,6 +5,20 @@ import random
 import pygame
 
 class Deck:
+    """
+    Represents the deck of cards in the game, including the draw pile and the front (top) card.
+
+    Attributes:
+        frontDeckCard (Card): The card currently shown on top of the deck.
+        cards (list[Card]): The list of cards currently in the deck (draw pile).
+        displayedSprites (pygame.sprite.Group): Sprites for cards in the deck.
+        frontDeckCardGroup (pygame.sprite.Group): Sprite group for the front card.
+        displayedCardBaseX (float): X position for the first card in the deck.
+        displayedCardBaseY (float): Y position for the cards in the deck.
+        displayedCardShiftBy (float): Horizontal shift between cards in the deck.
+        frontDeckCardShiftBy (float): Additional shift for the front card.
+    """
+
     frontDeckCard: Card
     cards: list[Card]
     displayedSprites: pygame.sprite.Group
@@ -17,6 +31,13 @@ class Deck:
     frontDeckCardShiftBy: float
 
     def __init__(self, cards: list[Card], appVariableValueHelper: AppVariableValueHelper):
+        """
+        Initializes the Deck with a list of cards and app variable helper.
+
+        Args:
+            cards (list[Card]): The initial list of cards for the deck.
+            appVariableValueHelper (AppVariableValueHelper): Helper for app-wide variables.
+        """
         self.displayedCardShiftBy = 20
         self.frontDeckCardShiftBy = 50
         self.cards = []
@@ -30,11 +51,17 @@ class Deck:
         self.shuffle()
 
     def shuffle(self):
+        """
+        Shuffles the deck and updates the shown and displayed cards.
+        """
         random.shuffle(self.cards)
         self.changeShownCard()
         self.changeDisplayedSprites()
 
     def changeDisplayedSprites(self):
+        """
+        Updates the positions and sprite groups for all cards in the deck and the front card.
+        """
         self.displayedSprites.empty()
         shiftedBy = self.displayedCardBaseX
         for card in self.cards:
@@ -46,6 +73,15 @@ class Deck:
         self.frontDeckCardGroup.add(self.frontDeckCard)
 
     def getNCards(self, n: int):
+        """
+        Removes and returns n cards from the top of the deck.
+
+        Args:
+            n (int): Number of cards to draw.
+
+        Returns:
+            list[Card]: The drawn cards.
+        """
         cardsToReturn = []
 
         for i in range(n):
@@ -57,6 +93,13 @@ class Deck:
         return cardsToReturn
     
     def addACard(self, card: Card, rotate: bool = False):
+        """
+        Adds a card to the deck, rotating the previous front card and updating the display.
+
+        Args:
+            card (Card): The card to add as the new front card.
+            rotate (bool): Whether to rotate the card when adding.
+        """
         oldFrontDeckCard = self.frontDeckCard
         oldFrontDeckCard.rotateCard()
         self.cards.append(oldFrontDeckCard)
@@ -65,6 +108,13 @@ class Deck:
         self.changeDisplayedSprites()
 
     def changeShownCard(self, card: Card = None, rotate: bool = False):
+        """
+        Changes the card shown on top of the deck.
+
+        Args:
+            card (Card, optional): The card to show. If None, pops the last card from the deck.
+            rotate (bool): Whether to rotate the card when showing.
+        """
         if card is not None:
             if rotate:
                 card.rotateCard()

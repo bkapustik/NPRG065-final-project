@@ -14,6 +14,21 @@ import random
 import pygame
 
 class GameManager:
+    """
+    Manages the overall game logic, including player turns, deck management, and game state transitions.
+
+    Attributes:
+        numberOfPlayers (int): The number of players in the game.
+        playerOnTurnIndex (int): The index of the player whose turn it is.
+        gameData (GameData): The shared game state and variables.
+        players (list[Player]): List of all players in the game.
+        humanPlayer (HumanPlayer): The human player instance.
+        deck (Deck): The deck of cards used in the game.
+        colorSprites (pygame.sprite.Group): Sprite group for color selection cards.
+        cards (list[Card]): All cards used in the game.
+        appVariableValueHelper (AppVariableValueHelper): Helper for application-wide variables.
+    """
+
     numberOfPlayers: int
     playerOnTurnIndex: int
 
@@ -27,6 +42,14 @@ class GameManager:
     appVariableValueHelper: AppVariableValueHelper
 
     def __init__(self, colorSprites: pygame.sprite.Group, gameData: GameData, appVariableValueHelper: AppVariableValueHelper):
+        """
+        Initializes the GameManager with the given sprite group, game data, and variable helper.
+
+        Args:
+            colorSprites (pygame.sprite.Group): Sprite group for color selection.
+            gameData (GameData): The shared game state and variables.
+            appVariableValueHelper (AppVariableValueHelper): Helper for application-wide variables.
+        """
         self.appVariableValueHelper = appVariableValueHelper
         self.numberOfPlayers = 4
         self.colorSprites = colorSprites
@@ -39,6 +62,9 @@ class GameManager:
         self.players = []
 
     def playOneTurn(self):
+        """
+        Executes a single turn for the current player, handling card play, drawing, and turn advancement.
+        """
         if not self.gameData.userInputReceived:
             return
 
@@ -72,6 +98,9 @@ class GameManager:
             self.playerOnTurnIndex += 1
 
     def removeFinishedPlayer(self):
+        """
+        Removes a player who has finished from the game and updates the player list.
+        """
         newPlayers = []
         for i in range(self.playerOnTurnIndex):
             newPlayers.append(self.players[i])
@@ -81,6 +110,12 @@ class GameManager:
         self.players = newPlayers
 
     def evaluateComputerPlayerCard(self, card: Card):
+        """
+        Evaluates the effect of a card played by a computer player and updates the game state accordingly.
+
+        Args:
+            card (Card): The card played by the computer player.
+        """
         if card.number == CardNumberType.TOP:
             self.gameData.colorToBePlayed = self.getRandomColor()
             self.gameData.evaluateTopCard()
@@ -98,18 +133,36 @@ class GameManager:
             return
         
     def getRandomColor(self) -> CardColorType:
+        """
+        Returns a random card color.
+
+        Returns:
+            CardColorType: A randomly selected card color.
+        """
         numberOfColors = 4
         colors = [CardColorType.ACORN, CardColorType.BELL, CardColorType.LEAF, CardColorType.HEART]
         randomIndex = random.randint(0, numberOfColors - 1)
         return colors[randomIndex]
 
     def render(self, screen: pygame.Surface):
+        """
+        Draws the deck and all players' cards to the given screen surface.
+
+        Args:
+            screen (pygame.Surface): The surface to draw on.
+        """
         self.deck.displayedSprites.draw(screen)
         self.deck.frontDeckCardGroup.draw(screen)
         for player in self.players:
             player.displayedSprites.draw(screen)
 
     def restartGame(self, gameData: GameData):
+        """
+        Resets the game state, shuffles and deals cards, and initializes all players.
+
+        Args:
+            gameData (GameData): The shared game state and variables.
+        """
         self.gameData = gameData
         self.gameData.gameState = GameState.PLAYING
         self.cards = []
@@ -134,6 +187,15 @@ class GameManager:
             self.gameData.userInputReceived = True
         
     def assignColor(self, color: str):
+        """
+        Converts a color name string to its corresponding CardColorType enum value.
+
+        Args:
+            color (str): The color name ("Acorns", "Balls", "Heart", or "Green").
+
+        Returns:
+            CardColorType: The corresponding CardColorType enum value.
+        """
         if color == "Acorns":
             return CardColorType.ACORN
         if color == "Balls":
@@ -143,6 +205,15 @@ class GameManager:
         return CardColorType.LEAF
     
     def assignNumber(self, number: str):
+        """
+        Converts a card number name string to its corresponding CardNumberType enum value.
+
+        Args:
+            number (str): The card number name ("seven", "eight", etc.).
+
+        Returns:
+            CardNumberType: The corresponding CardNumberType enum value.
+        """
         if number == "seven":
             return CardNumberType.SEVEN
         if number == "eight":
@@ -160,6 +231,10 @@ class GameManager:
         return CardNumberType.ACE
 
     def loadCards(self):
+        """
+        Loads all cards into the game, creating card objects for each color and number combination.
+        Sets up card click callbacks for special cards.
+        """
         cardColors = ["Acorns", "Balls", "Green", "Heart"]
         cardNames = ["seven", "eight", "nine", "ten", "bot", "top", "king", "ace"]
 
@@ -185,12 +260,24 @@ class GameManager:
                 self.cards.append(card)
 
     def evaluateCardWithNumberSeven(self, card: Card):
+        """
+        Handles the logic for playing a SEVEN card by the human player.
+
+        Args:
+            card (Card): The SEVEN card being played.
+        """
         if not self.canPlayCard(card):
             return
         self.gameData.evaluateCardNumberSeven()
         self.finishMove(card)
 
     def evaluateTopCard(self, card: Card):
+        """
+        Handles the logic for playing a TOP card by the human player.
+
+        Args:
+            card (Card): The TOP card being played.
+        """
         if not self.canPlayCard(card):
             return
         self.gameData.displayColorOptions = True
@@ -202,18 +289,36 @@ class GameManager:
         self.deck.addACard(card)
 
     def evaluateSkippingCard(self, card: Card):
+        """
+        Handles the logic for playing an ACE (skipping) card by the human player.
+
+        Args:
+            card (Card): The ACE card being played.
+        """
         if not self.canPlayCard(card):
             return
         self.gameData.evaluateSkippingCard()
         self.finishMove(card)
 
     def evaluateLeafBotCard(self, card: Card):
+        """
+        Handles the logic for playing a LEAF BOT card by the human player.
+
+        Args:
+            card (Card): The LEAF BOT card being played.
+        """
         if not self.canPlayCard(card):
             return
         self.gameData.evaluateLeafBotCard()
         self.finishMove(card)
 
     def finishMove(self, card: Card):
+        """
+        Finalizes the move after a card is played by the human player, updating state and deck.
+
+        Args:
+            card (Card): The card that was played.
+        """
         self.humanPlayer.displayedSprites.remove(card)
         self.humanPlayer.cards.remove(card)
         self.gameData.colorToBePlayed = card.color
@@ -224,12 +329,22 @@ class GameManager:
             self.gameData.playerHasFinished = True
 
     def evaluateCard(self, card: Card):
+        """
+        Handles the logic for playing a regular card by the human player.
+
+        Args:
+            card (Card): The card being played.
+        """
         if not self.canPlayCard(card):
             return
         
         self.finishMove(card)
 
     def evaluateTakeCardButtonClick(self):
+        """
+        Handles the logic when the "Take Card" button is clicked by the human player.
+        Draws the appropriate number of cards and updates the turn.
+        """
         if (not self.gameData.userInputReceived):
             if (self.gameData.cardsToTake > 0):
                 self.humanPlayer.takeCards(self.deck.getNCards(self.gameData.cardsToTake))
@@ -242,6 +357,15 @@ class GameManager:
             self.playerOnTurnIndex += 1
 
     def canPlayCard(self, card: Card):
+        """
+        Determines if the given card can be played by the human player based on the current game state.
+
+        Args:
+            card (Card): The card to check.
+
+        Returns:
+            bool: True if the card can be played, False otherwise.
+        """
         if self.gameData.userInputReceived or self.gameData.displayColorOptions:
             return False
         
