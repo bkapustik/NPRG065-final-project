@@ -18,7 +18,6 @@ class GameManager:
     playerOnTurnIndex: int
 
     gameData: GameData
-    playerHasFinished: bool
     players: list[Player]
     humanPlayer: HumanPlayer
     deck: Deck
@@ -37,7 +36,6 @@ class GameManager:
         self.playerOnTurnIndex = 0
         self.deck = None
         self.humanPlayer = None
-        self.playerHasFinished = False
         self.players = []
 
     def playOneTurn(self):
@@ -190,40 +188,46 @@ class GameManager:
         if not self.canPlayCard(card):
             return
         self.gameData.evaluateCardNumberSeven()
-        self.evaluateCard(card)
+        self.finishMove(card)
 
     def evaluateTopCard(self, card: Card):
         if not self.canPlayCard(card):
             return
-        self.gameData.evaluateTopCard()
         self.gameData.displayColorOptions = True
         self.humanPlayer.displayedSprites.remove(card)
         self.humanPlayer.cards.remove(card)
-
+        if self.humanPlayer.checkHasFinished():
+            self.gameData.playerHasFinished = True
+        self.gameData.evaluateTopCard()
         self.deck.addACard(card)
 
     def evaluateSkippingCard(self, card: Card):
         if not self.canPlayCard(card):
             return
         self.gameData.evaluateSkippingCard()
-        self.evaluateCard(card)
+        self.finishMove(card)
 
     def evaluateLeafBotCard(self, card: Card):
         if not self.canPlayCard(card):
             return
         self.gameData.evaluateLeafBotCard()
-        self.evaluateCard(card)
+        self.finishMove(card)
 
-    def evaluateCard(self, card: Card):
-        if not self.canPlayCard(card):
-            return
+    def finishMove(self, card: Card):
         self.humanPlayer.displayedSprites.remove(card)
         self.humanPlayer.cards.remove(card)
-
         self.gameData.colorToBePlayed = card.color
         self.gameData.userInputReceived = True
         self.playerOnTurnIndex += 1
         self.deck.addACard(card)
+        if self.humanPlayer.checkHasFinished():
+            self.gameData.playerHasFinished = True
+
+    def evaluateCard(self, card: Card):
+        if not self.canPlayCard(card):
+            return
+        
+        self.finishMove(card)
 
     def evaluateTakeCardButtonClick(self):
         if (not self.gameData.userInputReceived):

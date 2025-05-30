@@ -54,14 +54,10 @@ class ComputerPlayer(Player):
     
     def tryPlayCard(self, topDeckCard: Card) -> Card | None:
         if self.gameData.cardsToTake > 0:
-            cancellingCard = self.tryCancelTakingACard()
-            if cancellingCard is not None:
-                return cancellingCard
+            return self.tryCancelTakingACard()
             
         if self.gameData.numberOfPlayersSkippedByAce > 0:
-            cancellingCard = self.tryCancelBeingSkipped()
-            if cancellingCard is not None:
-                return cancellingCard
+            return self.tryCancelBeingSkipped()
             
         colorToPlay = topDeckCard.color
         

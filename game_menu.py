@@ -87,10 +87,11 @@ class GameMenu:
         self.colorSprites.draw(self.screen)
 
     def render(self):
-        if (self.gameData.displayColorOptions):
-            self.displayColorOptions()
-        elif (self.gameData.gameState == GameState.PLAYING):
-            self.displayGame()
+        if (self.gameData.gameState == GameState.PLAYING):
+            if (self.gameData.displayColorOptions):
+                self.displayColorOptions()
+            else:
+                self.displayGame()
         else:
             self.displayMenu()
 
@@ -119,7 +120,7 @@ class GameMenu:
     def displayGame(self):
         currentTime = pygame.time.get_ticks()
         if (currentTime > self.millisecondsBetweenRounds + self.lastTick and
-             self.gameData.userInputReceived
+            self.gameData.userInputReceived
         ):
             if (self.gameData.playerHasFinished):
                 self.gameData.gameState = GameState.PLAYER_WON
